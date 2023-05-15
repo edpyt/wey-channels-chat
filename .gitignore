@@ -1,3 +1,5 @@
 new_venv/
 testenv/
 .idea/
+db.sqlite3
+media/

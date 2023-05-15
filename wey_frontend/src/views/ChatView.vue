@@ -9,11 +9,14 @@
                v-on:click="setActiveConversation(conversation.id)"
           >
               <div class="flex items-center space-x-2">
-                  <img src="https://i.pravatar.cc/300?img=70" class="w-[40px] rounded-full">
 
                   <template
                       v-for="user in conversation.users"
                       v-bind:key="user.id">
+
+                    <img :src="user.get_avatar" class="w-[40px] rounded-full">
+
+
                     <p class="text-xs font-bold"
                        v-if="user.id !== userStore.user.id">
                       {{ user.name }}
@@ -45,7 +48,7 @@
                   <span class="text-xs text-gray-500 leading-none">{{ message.created_at_formatted }} ago</span>
               </div>
               <div class="flex-shrink-0 h-10 w-10 rounded-full bg-gray-300">
-                  <img src="https://i.pravatar.cc/300?img=70" class="w-[40px] rounded-full">
+                  <img :src="message.created_by.get_avatar" class="w-[40px] rounded-full">
               </div>
             </div>
 
@@ -53,7 +56,7 @@
                 class="flex w-full mt-2 space-x-3 max-w-md"
                 v-else>
               <div class="flex-shrink-0 h-10 w-10 rounded-full bg-gray-300">
-                  <img src="https://i.pravatar.cc/300?img=70" class="w-[40px] rounded-full">
+                  <img :src="message.created_by.get_avatar" class="w-[40px] rounded-full">
               </div>
               <div>
                   <div class="bg-gray-300 p-3 rounded-r-lg rounded-bl-lg">
@@ -62,9 +65,9 @@
                   <span class="text-xs text-gray-500 leading-none">{{ message.created_at_formatted }} ago</span>
               </div>
            </div>
-
           </template>
 
+<span data-v-01536f9a=""><div data-v-62f48a11="" data-v-01536f9a="" class="seventv-emote-box emote-token"><img data-v-62f48a11="" class="seventv-chat-emote" srcset="https://cdn.7tv.app/emote/613937fcf7977b64f644c0d2/1x.webp 1x, https://cdn.7tv.app/emote/613937fcf7977b64f644c0d2/2x.webp 2x" alt="xdd" loading="lazy" decoding="async"><!----></div><span data-v-01536f9a=""></span></span>
         </div>
       </div>
 

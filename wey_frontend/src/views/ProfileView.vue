@@ -2,34 +2,39 @@
   <div class="max-w-7xl mx-auto grid grid-cols-4 gap-4">
     <div class="main-left col-span-1">
       <div class="p-4 bg-white border border-gray-200 text-center rounded-lg">
-          <img src="https://i.pravatar.cc/300?img=70" class="mb-6 rounded-full">
+          <img :src="user.get_avatar" class="mb-6 rounded-full">
 
           <p><strong>{{ user.name }}</strong></p>
-
-          <div class="mt-6 flex space-x-8 justify-around">
+          <p><small>{{ user.email }}</small></p>
+          <div class="mt-6 flex space-x-8 justify-around" v-if="user.id">
               <RouterLink :to="{'name': 'friends', params: {'id': user.id}}" class="text-xs text-gray-500">{{ user.friends_count }} friends</RouterLink>
-              <p class="text-xs text-gray-500">120 posts</p>
+              <p class="text-xs text-gray-500">{{ user.posts_count }} posts</p>
           </div>
 
 
           <div class="mt-6">
-            <button class="inline-block py-4 px-3 bg-purple-600 text-sm text-white rounded-lg"
-                    @click="sendFriendShipRequest"
-                    v-if="userStore.user.id !== user.id">
-              Send friendship request
-            </button>
+            <div v-if="userStore.user.id !== user.id">
+              <button class="inline-block py-4 px-3 bg-purple-600 text-sm text-white rounded-lg"
+                      @click="sendFriendShipRequest">
+                Send friendship request
+              </button>
 
-            <button class="inline-block mt-4 py-4 px-3 bg-purple-600 text-sm text-white rounded-lg"
-                    @click="sendDirectMessage"
-                    v-if="userStore.user.id !== user.id">
-              Send direct message
-            </button>
+              <button class="inline-block mt-4 py-4 px-3 bg-purple-600 text-sm text-white rounded-lg"
+                      @click="sendDirectMessage">
+                Send direct message
+              </button>
+            </div>
 
-            <button class="inline-block py-4 px-3 bg-red-600 text-sm text-white rounded-lg"
-                    @click="logout"
-                    v-else>
-              Logout
-            </button>
+            <div v-else>
+              <RouterLink class="inline-block mr-2 py-4 px-3 bg-purple-600 text-sm text-white rounded-lg"
+                          :to="{name: 'editprofile'}">
+                Edit profile
+              </RouterLink>
+              <button class="inline-block py-4 px-3 bg-red-600 text-sm text-white rounded-lg"
+                      @click="logout">
+                Logout
+              </button>
+            </div>
           </div>
       </div>
     </div>
@@ -150,7 +155,6 @@ export default {
     getFeed() {
       axios.get(`/api/posts/profile/${this.$route.params.id}/`)
           .then(response => {
-            console.log('data', response.data)
             this.posts = response.data.posts
             this.user = response.data.user
           })
@@ -167,7 +171,6 @@ export default {
             'body': this.body
           })
           .then(response => {
-            console.log('data', response.data)
             this.posts.unshift(response.data)
             this.body = ''
           })

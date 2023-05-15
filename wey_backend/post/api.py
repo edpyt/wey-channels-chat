@@ -1,13 +1,17 @@
 from django.http import JsonResponse
-from django.shortcuts import render
 from rest_framework.decorators import api_view
 
 from account.models import User
 from account.serializers import UserSerializer
 
 from .forms import PostForm
-from .models import Post, Like, Comment
-from .serializers import PostSerializer, PostDetailSerializer, CommentSerializer
+from .models import Comment, Like, Post, Trend
+from .serializers import (
+    CommentSerializer,
+    PostDetailSerializer,
+    PostSerializer,
+    TrendSerializer,
+)
 
 
 @api_view(['GET'])
@@ -16,6 +20,11 @@ def post_list(request):
     user_ids.append(request.user.id)
 
     posts = Post.objects.filter(created_by_id__in=user_ids)
+
+    trend = request.GET.get('trend', '')
+
+    if trend:
+        posts = posts.filter(body__icontains='#' + trend)
 
     serializer = PostSerializer(posts, many=True)
 
@@ -26,12 +35,10 @@ def post_list(request):
 def post_detail(request, pk):
     post = Post.objects.get(pk=pk)
 
-    return JsonResponse({
-        'post': PostDetailSerializer(post).data
-    })
+    return JsonResponse({'post': PostDetailSerializer(post).data})
 
 
-@api_view(["GET"])
+@api_view(['GET'])
 def post_list_profile(request, id):
     user = User.objects.get(pk=id)
     posts = Post.objects.filter(created_by__id=id)
@@ -39,10 +46,10 @@ def post_list_profile(request, id):
     posts_serializer = PostSerializer(posts, many=True)
     user_serializer = UserSerializer(user)
 
-    return JsonResponse({
-        'posts': posts_serializer.data,
-        'user': user_serializer.data
-    }, safe=False)
+    return JsonResponse(
+        {'posts': posts_serializer.data, 'user': user_serializer.data},
+        safe=False,
+    )
 
 
 @api_view(['POST'])
@@ -76,8 +83,9 @@ def post_like(request, pk):
 
 @api_view(['POST'])
 def post_create_comment(request, pk):
-    comment = Comment.objects.create(body=request.data.get('body'),
-                                     created_by=request.user)
+    comment = Comment.objects.create(
+        body=request.data.get('body'), created_by=request.user
+    )
 
     post = Post.objects.get(pk=pk)
     post.comments.add(comment)
@@ -85,5 +93,12 @@ def post_create_comment(request, pk):
     post.save()
 
     serializer = CommentSerializer(comment)
+
+    return JsonResponse(serializer.data, safe=False)
+
+
+@api_view(['GET'])
+def get_trends(request):
+    serializer = TrendSerializer(Trend.objects.all(), many=True)
 
     return JsonResponse(serializer.data, safe=False)
