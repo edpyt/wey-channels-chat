@@ -3,7 +3,7 @@
         <div class="max-w-7xl mx-auto">
             <div class="flex items-center justify-between">
                 <div class="menu-left">
-                    <RouterLink :to="{'name': 'home'}" class="text-xl">Wey</RouterLink>
+                    <RouterLink :to="{'name': 'feed'}" class="text-xl">Wey</RouterLink>
                 </div>
 
                 <div class="menu-center flex space-x-12" v-if="userStore.user.isAuthenticated">
@@ -33,15 +33,15 @@
                 </div>
 
                 <div class="menu-right">
-                  <template v-if="userStore.user.isAuthenticated">
+                  <template v-if="userStore.user.isAuthenticated && userStore.user.id">
                     <RouterLink :to="{'name': 'profile', 'params': {'id': userStore.user.id}}">
-                        <img :src="userStore.user.avatar" class="rounded-full">
+                        <img :src="userStore.user.avatar" class="rounded-full" style="width: 50px">
                     </RouterLink>
                   </template>
 
                   <template v-else>
                       <RouterLink :to="{'name': 'login'}" class="mr-4 py-4 px-6 bg-gray-600 text-white rounded-lg">Log in</RouterLink>
-                      <RouterLink :to="{'name': 'signup'}" class="mr-4 py-4 px-6 bg-gray-600 text-white rounded-lg">Sign up</RouterLink>
+                      <RouterLink :to="{'name': 'signup'}" class="mr-4 py-4 px-6 bg-purple-600 text-white rounded-lg">Sign up</RouterLink>
                   </template>
 
                 </div>

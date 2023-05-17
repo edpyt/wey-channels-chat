@@ -44,6 +44,11 @@ class PostAttachment(models.Model):
                                    related_name='post_attachments',
                                    on_delete=models.CASCADE)
 
+    def get_image(self):
+        if self.image:
+            return 'http://127.0.0.1:8000' + self.image.url
+        return ''
+
 
 class Post(models.Model):
     id = models.UUIDField(primary_key=True,

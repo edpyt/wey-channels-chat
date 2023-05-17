@@ -2,7 +2,8 @@ from django.urls import path
 from rest_framework_simplejwt.views import (TokenObtainPairView,
                                             TokenRefreshView)
 
-from . import api
+from . import api, views
+
 
 urlpatterns = [
     path('me/', api.me, name='me'),
@@ -11,6 +12,8 @@ urlpatterns = [
     path('login/', TokenObtainPairView.as_view(), name='token_obtain'),
     path('refresh/', TokenRefreshView.as_view(), name='token_refresh'),
     path('editprofile/', api.edit_profile, name='editprofile'),
+    path('editpassword/', api.editpassword, name='editpassword'),
+    path('editpassword/', api.editpassword, name='editpassword'),
 
     path('friends/<uuid:pk>/', api.friends, name='friends'),
     path('friends/<uuid:pk>/request/', api.send_friendship_request, name='send_friendship_request'),

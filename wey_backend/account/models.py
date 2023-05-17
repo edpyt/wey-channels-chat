@@ -16,7 +16,8 @@ class User(AbstractBaseUser, PermissionsMixin):
                             default='')
     avatar = models.ImageField(upload_to='avatars',
                                blank=True,
-                               null=True)
+                               null=True,
+                               default='300.jpg')
     friends = models.ManyToManyField('self')
     friends_count = models.IntegerField(default=0)
 

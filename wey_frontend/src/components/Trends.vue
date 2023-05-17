@@ -38,7 +38,7 @@ export default {
       axios
           .get('/api/posts/trends/')
           .then(response => {
-            console.log('trends', response.data)
+
             this.trends = response.data
           })
           .catch(err => {

@@ -47,9 +47,16 @@
           <form v-on:submit.prevent="submitForm" method="POST">
             <div class="p-4">
                 <textarea v-model="body" class="p-4 w-full bg-gray-100 rounded-lg" placeholder="What are you thinking about?"></textarea>
+            <img :src="previewPhoto" class="uploading-image rounded-xl mt-3"
+                style="width: 145px">
+
             </div>
+
             <div class="p-4 border-t border-gray-100 flex justify-between">
-              <a href="#" class="inline-block py-4 px-6 bg-gray-600 text-white rounded-lg">Attach image</a>
+              <label class="inline-block py-4 px-6 bg-gray-600 text-white rounded-lg cursor-pointer">
+                <input type="file" @change="uploadImage">
+                Attach Image
+              </label>
               <button class="inline-block py-4 px-6 bg-purple-600 text-white rounded-lg">Post</button>
             </div>
           </form>
@@ -69,6 +76,12 @@
     </div>
   </div>
 </template>
+
+<style>
+input[type=file]{
+  display: none;
+}
+</style>
 
 <script>
 import axios from "axios";
@@ -103,6 +116,8 @@ export default {
         id: null
       },
       body: '',
+      image: null,
+      previewPhoto: null
     }
   },
 
@@ -121,6 +136,16 @@ export default {
   },
 
   methods: {
+    uploadImage(e){
+      this.image = e.target.files[0];
+
+      const reader = new FileReader();
+      reader.readAsDataURL(this.image);
+
+      reader.onload = e => {
+        this.previewPhoto = e.target.result;
+      }
+    },
     sendDirectMessage() {
       console.log('sendDirectMessage')
 
@@ -164,15 +189,24 @@ export default {
     },
 
     submitForm() {
-      console.log('submitForm', this.body)
+      console.log('submitForm', this.body, this.image)
+
+      let formData = new FormData()
+      formData.append('image', this.image)
+      formData.append('body', this.body)
 
       axios.
-          post('api/posts/create/', {
-            'body': this.body
-          })
+          post('api/posts/create/', formData,{
+            headers: {
+              "Content-Type": "multipart/form-data"
+            }
+      })
           .then(response => {
             this.posts.unshift(response.data)
             this.body = ''
+            this.image = null
+            this.previewPhoto = null
+            this.user.posts_count += 1
           })
           .catch(error => {
             console.log('error', error)

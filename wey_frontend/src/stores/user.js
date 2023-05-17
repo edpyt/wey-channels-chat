@@ -27,7 +27,7 @@ export const useUserStore = defineStore({
                 this.user.id = localStorage.getItem('user.id')
                 this.user.name = localStorage.getItem('user.name')
                 this.user.email = localStorage.getItem('user.email')
-                this.user.email = localStorage.getItem('user.avatar')
+                this.user.avatar = localStorage.getItem('user.avatar')
                 this.user.isAuthenticated = true
 
                 this.refreshToken()

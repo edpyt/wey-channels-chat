@@ -50,13 +50,14 @@ import { useUserStore } from "@/stores/user";
 export default {
   setup() {
     const userStore = useUserStore()
+
     return {
-      userStore
+      userStore,
     }
   },
 
 
-  data(){
+  data() {
     return {
       form: {
         email: '',
@@ -66,15 +67,15 @@ export default {
     }
   },
   methods: {
-    async submitForm () {
+    async submitForm() {
       this.errors = []
 
       if (this.form.email === '') {
-          this.errors.push('Your e-mail is missing')
+        this.errors.push('Your e-mail is missing')
       }
 
       if (this.form.password === '') {
-          this.errors.push('Your password is missing')
+        this.errors.push('Your password is missing')
       }
 
       if (this.errors.length === 0) {
@@ -83,20 +84,22 @@ export default {
               this.userStore.setToken(response.data)
 
               axios.defaults.headers.common['Authorization'] = 'Bearer ' + response.data.access
-             })
-            .catch(error => {
-              console.log('error', error)
-            })
-
-        await axios.get('/api/me/')
-            .then(response => {
-              this.userStore.setUserInfo(response.data)
-
-              this.$router.push('/feed')
             })
             .catch(error => {
-              console.log('error', error)
+              console.log('error', error.response.data.detail)
+              this.errors.push('The email or password is incorrect! Or the user is not activated!')
             })
+        if (this.errors.length === 0) {
+          await axios.get('/api/me/')
+              .then(response => {
+                this.userStore.setUserInfo(response.data)
+
+                this.$router.push('/feed')
+              })
+              .catch(error => {
+                console.log('error', error)
+              })
+        }
       }
     }
   }

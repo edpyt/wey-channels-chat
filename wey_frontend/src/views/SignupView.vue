@@ -39,8 +39,8 @@
                     </div>
 
                     <template v-if="errors.length > 0">
-                        <div class="bg-red-300 text-white rounded-lg p-6">
-                            <p v-for="error in errors" v-bind:key="error">{{ error }}</p>
+                        <div class="bg-red-300 text-white rounded-lg p-6" v-for="error in errors" v-bind:key="error">
+                            <p>{{ error }}</p>
                         </div>
                     </template>
 
@@ -103,19 +103,23 @@ export default {
                 axios
                     .post('/api/signup/', this.form)
                     .then(response => {
-                        if (response.data.message === 'success') {
-                            this.toastStore.showToast(5000, 'The user is registered. Please log in', 'bg-emerald-500')
+                        const response_data = response.data.message
+                        if (response_data === 'success') {
+                            this.toastStore.showToast(5000, 'The user is registered. Please activate your account.', 'bg-emerald-500')
 
                             this.form.email = ''
                             this.form.name = ''
                             this.form.password1 = ''
                             this.form.password2 = ''
                         } else {
-                            this.toastStore.showToast(5000, 'Something went wrong. Please try again', 'bg-red-300')
+                          for (const err in response_data){
+                            this.errors.push(response_data[err][0])
+                          }
                         }
                     })
                     .catch(error => {
                         console.log('error', error)
+                        this.toastStore.showToast(5000, 'Something went wrong. Please try again', 'bg-red-300')
                     })
             }
         }
