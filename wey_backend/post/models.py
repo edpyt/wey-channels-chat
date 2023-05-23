@@ -1,5 +1,6 @@
 import uuid
 
+from django.conf import settings
 from django.db import models
 from django.utils.timesince import timesince
 
@@ -46,7 +47,7 @@ class PostAttachment(models.Model):
 
     def get_image(self):
         if self.image:
-            return 'http://127.0.0.1:8000' + self.image.url
+            return settings.WEBSITE_URL + self.image.url
         return ''
 
 
@@ -70,6 +71,8 @@ class Post(models.Model):
     created_by = models.ForeignKey(User,
                                    related_name='posts',
                                    on_delete=models.CASCADE)
+
+    is_private = models.BooleanField(default=False)
 
     class Meta:
         ordering = ('-created_at',)

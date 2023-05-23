@@ -25,7 +25,7 @@
                     v-for="friendshipRequest in friendshipRequests"
                     v-bind:key="friendshipRequest.id"
                 >
-                    <img :src="friendshipRequests.created_by.get_avatar" class="mb-6 mx-auto rounded-full">
+                    <img :src="friendshipRequest.created_by.get_avatar" class="mb-6 mx-auto rounded-full">
 
                     <p>
                         <strong>
@@ -84,8 +84,8 @@
 import axios from 'axios'
 import PeopleYouMayKnow from '../components/PeopleYouMayKnow.vue'
 import Trends from '../components/Trends.vue'
+import FeedItem from '../components/FeedItem.vue'
 import { useUserStore } from '@/stores/user'
-
 
 export default {
     name: 'FriendsView',
@@ -93,10 +93,8 @@ export default {
     setup() {
         const userStore = useUserStore()
 
-
         return {
-            userStore,
-
+            userStore
         }
     },
 

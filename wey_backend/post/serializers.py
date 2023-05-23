@@ -20,7 +20,8 @@ class PostSerializer(serializers.ModelSerializer):
         model = Post
         fields = ('id', 'body', 'likes_count',
                   'comments_count', 'created_by',
-                  'created_at_formatted', 'attachments')
+                  'created_at_formatted', 'attachments',
+                  'is_private')
 
 
 class CommentSerializer(serializers.ModelSerializer):

@@ -24,8 +24,9 @@ SECRET_KEY = 'django-insecure-ohs5m304cuh-aj(5rif5xp@kz37tj=%!uibk3-n*3ro$u)@=1u
 # SECURITY WARNING: don't run with debug turned on in production!
 DEBUG = True
 
-WEBSITE_URL = 'http://127.0.0.1:8000'
-ALLOWED_HOSTS = ['*']
+WEBSITE_URL = 'http://api.wey.com'
+ALLOWED_HOSTS = [WEBSITE_URL]
+
 
 # Application definition
 

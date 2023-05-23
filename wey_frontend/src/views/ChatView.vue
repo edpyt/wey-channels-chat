@@ -144,8 +144,8 @@ export default {
 
             if (this.conversations.length) {
               this.activeConversation = this.conversations[0].id
+              this.getMessages()
             }
-            this.getMessages()
           })
           .catch(err => {
             console.log(err)
@@ -153,7 +153,9 @@ export default {
     },
 
     getMessages(){
-      this.socket = new WebSocket(`ws://127.0.0.1:8000/ws/${this.activeConversation}/`);
+      const result = axios.defaults.baseURL.replace(/(^\w+:|^)\/\//, '')
+
+      this.socket = new WebSocket(`ws://${result}/ws/${this.activeConversation}/`);
 
       let self = this
 

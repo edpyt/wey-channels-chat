@@ -28,8 +28,8 @@
                     </div>
 
                     <div>
-                        <label>Avatar</label><br>
-                        <input type="file" ref="file" class="w-full mt-2 py-4 px-6 border border-gray-200 rounded-lg">
+                        <label>Avatar</label>
+                        <input type="file" ref="file">
                     </div>
 
                     <template v-if="errors.length > 0">

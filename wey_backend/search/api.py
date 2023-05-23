@@ -1,3 +1,4 @@
+from django.db.models import Q
 from django.http import JsonResponse
 
 from rest_framework.decorators import api_view
@@ -13,10 +14,17 @@ def search(request):
     data = request.data
     query = data['query']
 
+    user_ids = [user.id for user in request.user.friends.all()] + \
+               [request.user.id]
+
     users = User.objects.filter(name__icontains=query)
     users_serializer = UserSerializer(users, many=True)
 
-    posts = Post.objects.filter(body__icontains=query)
+    posts = Post.objects.filter(Q(body__icontains=query,
+                                  is_private=False) |
+                                Q(created_by_id__in=user_ids,
+                                  body__icontains=query))  # Public posts
+
     posts_serializer = PostSerializer(posts, many=True)
 
     return JsonResponse({'users': users_serializer.data,

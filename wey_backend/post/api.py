@@ -1,7 +1,8 @@
+from django.db.models import Q
 from django.http import JsonResponse
 from rest_framework.decorators import api_view
 
-from account.models import User
+from account.models import User, FriendshipRequest
 from account.serializers import UserSerializer
 
 from .forms import PostForm, AttachmentForm
@@ -14,17 +15,22 @@ from .serializers import (
 )
 
 
+def user_friends(user):
+    user_ids = [user.id for user in user.friends.all()]
+    return user_ids
+
+
 @api_view(['GET'])
 def post_list(request):
-    user_ids = [user.id for user in request.user.friends.all()]
+    user_ids = user_friends(request.user)
     user_ids.append(request.user.id)
-
     posts = Post.objects.filter()
 
     trend = request.GET.get('trend', '')
 
     if trend:
-        posts = posts.filter(body__icontains='#' + trend)
+        posts = posts.filter(body__icontains='#' + trend)\
+            .filter(is_private=False)
 
     serializer = PostSerializer(posts, many=True)
 
@@ -33,21 +39,53 @@ def post_list(request):
 
 @api_view(['GET'])
 def post_detail(request, pk):
-    post = Post.objects.get(pk=pk)
+    user_ids = user_friends(request.user)
+
+    user_ids.append(request.user.id)
+
+    post = Post.objects.filter(
+        Q(created_by_id__in=user_ids) | Q(is_private=False)
+    ).get(pk=pk)
 
     return JsonResponse({'post': PostDetailSerializer(post).data})
 
 
 @api_view(['GET'])
 def post_list_profile(request, id):
+    user_ids = user_friends(request.user)
+
     user = User.objects.get(pk=id)
+
     posts = Post.objects.filter(created_by__id=id)
+
+    if request.user not in user.friends.all() and\
+            request.user.id != id:
+        posts = posts.filter(is_private=False)
 
     posts_serializer = PostSerializer(posts, many=True)
     user_serializer = UserSerializer(user)
 
+    can_send_friendship_request = True
+
+    if request.user in user.friends.all():
+        can_send_friendship_request = False
+
+    check1 = FriendshipRequest.objects.filter(created_for=request.user).filter(
+        created_by=user
+    )
+    check2 = FriendshipRequest.objects.filter(created_for=user).filter(
+        created_by=request.user
+    )
+
+    if check1 or check2:
+        can_send_friendship_request = False
+
     return JsonResponse(
-        {'posts': posts_serializer.data, 'user': user_serializer.data},
+        {
+            'posts': posts_serializer.data,
+            'user': user_serializer.data,
+            'can_send_friendship_request': can_send_friendship_request,
+        },
         safe=False,
     )
 
