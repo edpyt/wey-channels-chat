@@ -141,7 +141,7 @@ export default {
           .then(response => {
 
             this.conversations = response.data
-
+            console.log('conversations', this.conversations)
             if (this.conversations.length) {
               this.activeConversation = this.conversations[0].id
               this.getMessages()

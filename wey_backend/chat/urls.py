@@ -9,6 +9,6 @@ urlpatterns = [
     path('<uuid:pk>/send/', api.conversation_send_message,
          name='conversation_send_message'),
 
-    path('get-or-create/<uuid:user_pk>/', api.conversation_get_or_create,
+    path('<uuid:user_pk>/get-or-create/', api.conversation_get_or_create,
          name='conversation_get_or_create')
 ]
